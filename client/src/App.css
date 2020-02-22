@@ -1,0 +1,31 @@
+
+* {
+  font-size: 12px;
+}
+#login {
+  float: right;
+  margin-right: 12px;
+}
+input {
+  height: auto !important;
+  padding: 3px 4px !important;
+  margin-right: 4px !important;
+}
+
+button{
+  font-size: 12px;
+}
+.track-search-input {
+  margin-right: 16px;
+}
+
+caption {
+  text-align: left;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.cancel-button {
+  margin-left: -18px;
+  margin-right: 18px;
+}

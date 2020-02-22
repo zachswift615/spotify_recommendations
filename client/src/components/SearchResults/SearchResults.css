@@ -1,0 +1,13 @@
+td, th {
+  padding: 3px 4px !important;
+}
+button{
+  font-size: 10px !important;
+  letter-spacing: normal !important;
+  padding: 3px 4px !important;
+  line-height: normal !important;
+  height: auto !important;
+}
+img {
+  height: 36px;
+}
