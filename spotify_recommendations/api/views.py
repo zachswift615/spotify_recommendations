@@ -1,6 +1,5 @@
 import base64
 import uuid
-from collections import OrderedDict
 from urllib.parse import urlencode
 
 from django.contrib.auth.models import User, Group
@@ -15,7 +14,6 @@ from spotify_recommendations.config import get_config
 
 state_key = 'spotify_auth_state'
 redirect_uri = get_config('redirect_uri')
-print(redirect_uri)
 client_id = get_config('client_id')
 client_secret = get_config('client_secret')
 
