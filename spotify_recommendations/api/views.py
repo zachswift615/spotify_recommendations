@@ -82,7 +82,7 @@ def callback(request):
         response = redirect('{}/#{}'.format(get_config('ui_host'), query_string))
         response.delete_cookie(state_key)
         return response
-    return Response('test')
+    return Response('', status=status.HTTP_401_UNAUTHORIZED)
 
 
 def refresh_token(request):
