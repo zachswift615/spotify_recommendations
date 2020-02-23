@@ -1,5 +1,6 @@
 import base64
 import uuid
+from pprint import pprint
 from urllib.parse import urlencode
 
 from django.contrib.auth.models import User, Group
@@ -9,7 +10,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import redirect
 
-from spotify_recommendations.api.serializers import UserSerializer, GroupSerializer
+from spotify_recommendations.api.models import Token, SanitizedNewRelease
+from spotify_recommendations.api.serializers import UserSerializer, GroupSerializer, NewReleaseSerializer
+from spotify_recommendations.api.tasks import get_new_releases_task, transform_new_releases
 from spotify_recommendations.config import get_config
 
 state_key = 'spotify_auth_state'
@@ -32,6 +35,14 @@ class GroupViewSet(viewsets.ModelViewSet):
     """
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
+
+
+class NewReleasesViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = SanitizedNewRelease.objects.all()
+    serializer_class = NewReleaseSerializer
 
 
 @api_view(http_method_names=['GET'])
@@ -74,6 +85,7 @@ def callback(request):
     if token_response.status_code == 200:
         body = token_response.json()
         access_token = body['access_token']
+        Token.set_access_token(access_token)
         refresh_token = body['refresh_token']
         query_string = urlencode({
             'access_token': access_token,
@@ -87,3 +99,12 @@ def callback(request):
 
 def refresh_token(request):
     pass
+
+
+@api_view(http_method_names=['GET'])
+def get_new_releases(request):
+    token = Token.get_access_token()
+    if token is None:
+        return Response('', status=status.HTTP_401_UNAUTHORIZED)
+    get_new_releases_task.apply_async((token.token,), link=transform_new_releases.s())
+    return Response('test')
