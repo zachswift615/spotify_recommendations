@@ -97,10 +97,6 @@ def callback(request):
     return Response('', status=status.HTTP_401_UNAUTHORIZED)
 
 
-def refresh_token(request):
-    pass
-
-
 @api_view(http_method_names=['GET'])
 def get_new_releases(request):
     token = Token.get_access_token()
