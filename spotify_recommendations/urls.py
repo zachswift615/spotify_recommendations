@@ -33,6 +33,7 @@ urlpatterns += [
     path('login', views.login),
     path('callback', views.callback),
     path('get-new-releases', views.get_new_releases),
+    path('get-new-music-friday-no-rap', views.get_new_music_friday_no_rap),
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]

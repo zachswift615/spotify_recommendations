@@ -15,18 +15,17 @@ export default class NewReleases extends Component {
 
     getNewReleases = (e, url) => {
         if (url === undefined) {
-            url = 'http://localhost:8000/new-releases';
+            url = 'http://localhost:8000/get-new-music-friday-no-rap';
         }
         fetch(url)
             .then((response) => {
                 return response.json();
             })
             .then((data) => {
+                debugger
                 this.setState({results: []});
                 this.setState({
-                    results: data.results,
-                    next: data.next,
-                    prev: data.previous
+                    results: data,
                 })
             })
     };
@@ -45,11 +44,11 @@ export default class NewReleases extends Component {
                         this.state.results.map((track, i) => {
                             return <tr key={i}>
 
-                                <td> {track.release_name}</td>
-                                <td> {track.artists}</td>
+                                <td> {track.name}</td>
+                                <td> {track.artists.map((artist) => artist.name).join(', ')}</td>
 
                                 <td>
-                                    <a href={track.url} target="_blank">Play</a>
+                                    <a href={track.external_urls.spotify} target="_blank">Play</a>
                                 </td>
                             </tr>
                         })

@@ -104,3 +104,42 @@ def get_new_releases(request):
         return Response('', status=status.HTTP_401_UNAUTHORIZED)
     get_new_releases_task.apply_async((token.token,), link=transform_new_releases.s())
     return Response('test')
+
+
+def is_low_speechiness(track_id):
+    try:
+        audio_features = make_spotify_request('/audio-features/{track_id}'.format(track_id=track_id))
+    except Exception as e:
+        return True
+    speechiness = audio_features['speechiness']
+    return speechiness < 0.5
+
+
+def make_spotify_request(api_path, query_params=None):
+    token = Token.get_access_token()
+    if token is None:
+        return Response('', status=status.HTTP_401_UNAUTHORIZED)
+    headers = {
+        'Authorization': "Bearer {}".format(token.token)
+    }
+    new_releases_response = requests.get(
+        'https://api.spotify.com/v1{}'.format(api_path), headers=headers)
+    if new_releases_response.status_code == 200:
+        return new_releases_response.json()
+    else:
+        print(new_releases_response.text)
+        print(new_releases_response.status_code)
+        raise Exception('Request Failed')
+
+
+@api_view(http_method_names=['GET'])
+def get_new_music_friday_no_rap(request):
+    new_releases = make_spotify_request('/playlists/37i9dQZF1DX4JAvHpjipBk?si=7CVrRBORReCRBgWcrW5a-g/tracks')
+    no_rap = []
+    for track in new_releases['tracks']['items']:
+        inner_track = track.get('track')
+        if inner_track:
+            track_id = inner_track.get('id')
+            if is_low_speechiness(track_id):
+                no_rap.append(inner_track)
+    return Response(no_rap)
