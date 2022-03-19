@@ -36,6 +36,11 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 @api_view(http_method_names=['GET'])
 def login(request):
+    """
+    This function gets called when the log in with spotify button is clicked.
+    It redirects to spotify/authorize endpoint. Then that redirects to the
+    configured redirect uri.
+    """
     scope = ''
     state = uuid.uuid4()
     query_string = dict(
@@ -54,6 +59,13 @@ def login(request):
 
 @api_view(http_method_names=['GET'])
 def callback(request):
+    """
+    This function is the configured redirect uri. Once the user is authorized
+    from the login function, they are redirected to this function. Using the
+    api secret token, we request an access token, put the tokens in the url
+    and redirect to the UI. The UI code extracts the token and applies it on
+    each subsequent request.
+    """
     state = request.query_params.get('state')
     code = request.query_params.get('code')
     stored_state = request.COOKIES.get(state_key)
