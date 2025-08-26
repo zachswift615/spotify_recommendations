@@ -1,0 +1,7 @@
+celery==5.5.2
+Django==3.0.3
+djangorestframework==3.16.1
+setuptools==80.9.0
+legacy-cgi==2.6.3
+django-cors-headers==4.7.0
+requests==2.32.5
